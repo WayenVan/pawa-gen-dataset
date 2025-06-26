@@ -1,19 +1,32 @@
+from transformers import modeling_utils
+
+if (
+    not hasattr(modeling_utils, "ALL_PARALLEL_STYLES")
+    or modeling_utils.ALL_PARALLEL_STYLES is None
+):
+    modeling_utils.ALL_PARALLEL_STYLES = ["tp", "none", "colwise", "rowwise"]
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
-
 model = AutoModelForCausalLM.from_pretrained(
-    "sartifyllc/pawa-min-beta", device_map="cuda:0", torch_dtype="bfloat16"
+    "sartifyllc/pawa-min-beta", torch_dtype="bfloat16"
 )
-tokenizer = AutoTokenizer.from_pretrained("sartifyllc/pawa-min-beta", device_map="cpu")
-pipe = pipeline(
-    "text-generation",
-    model="sartifyllc/pawa-min-beta",
-    tokenizer=tokenizer,
-    device=0,
-)
+tokenizer = AutoTokenizer.from_pretrained("sartifyllc/pawa-min-beta")
+
 messages = [
+    {"role": "system", "content": "You are a translator model."},
     {"role": "user", "content": "Who are you?"},
 ]
-print(pipe(messages))
+tmp = tokenizer.apply_chat_template(
+    messages,
+    tokenize=False,
+    add_generation_prompt=True,
+)
+print(tmp)
 
-# print(model.__class__.__name__)
+# pipe = pipeline(
+#     "text-generation",
+#     model=model,
+#     tokenizer=tokenizer,
+#     device=0,
+# )
+# print(pipe(messages))
