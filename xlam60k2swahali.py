@@ -116,8 +116,8 @@ for batch in tqdm(loader):
                 "id": batch["id"][i].item(),
                 "query_en": batch["query"][i],
                 "query_sw": outputs[i][0]["generated_text"],
-                "answers": json.loads(batch["answers"][i]),
-                "tools": json.loads(batch["tools"][i]),
+                "answers": batch["answers"][i],
+                "tools": batch["tools"][i],
             }
             f.write(json.dumps(jobj, ensure_ascii=False, indent=4) + ",\n")
 

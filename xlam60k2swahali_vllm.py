@@ -46,9 +46,7 @@ model = LLM(
     task="generate",
     model_impl="vllm",
     tensor_parallel_size=8,  # Adjust based on your GPU setup
-    enforce_eager=True,
     dtype="bfloat16",
-    enable_prefix_caching=True,
 )
 
 # ------------------- loading the tokenizer -------------------
@@ -108,8 +106,8 @@ with open(output_file, "w") as f:
                 "query_en": batch["query"][i],
                 "query_sw": outputs[i].outputs[0].text,
                 # "query_sw": outputs[i].sequences[0].text,
-                "answers": json.loads(batch["answers"][i]),
-                "tools": json.loads(batch["tools"][i]),
+                "answers": batch["answers"][i],
+                "tools": batch["tools"][i],
             }
             f.write(json.dumps(jobj, ensure_ascii=False, indent=4) + ",\n")
 
